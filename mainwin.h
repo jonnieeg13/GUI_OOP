@@ -1,16 +1,17 @@
 #ifndef __MAINWIN_H
 #define __MAINWIN_H
 
-#include <gtkmm.h>
-#include <vector>
-#include <fstream>
-#include "student.h"
-#include "parent.h"
-#include "entrydialog.h"
-#include "section.h"
 #include "comboboxcontainer.h"
+#include "entrydialog.h"
+#include "parent.h"
+#include "section.h"
+#include "student.h"
 #include "teacher.h"
 #include "transcript.h"
+#include <fstream>
+#include <gtkmm.h>
+#include <gtkmm/messagedialog.h>
+#include <vector>
 
 const int MAX_STUDENTS = 100;
 const int MAX_PARENTS = 400;
@@ -47,8 +48,9 @@ class Mainwin : public Gtk::Window {
         void on_open_click();
         void on_save_as_click();
         void on_save_click();
+        int current_year();
 
-    private:
+        private: 
         void show_data();
         std::vector<Student*> students;                   
         std::vector<Parent*> parents;
@@ -76,7 +78,7 @@ class Mainwin : public Gtk::Window {
         Gtk::ToolButton *transcripticon;
         Gtk::ToolButton *gradeicon;
         Gtk::ScrolledWindow *scrolledwindow;
-
+        int curr_year;
 };
 #endif 
 

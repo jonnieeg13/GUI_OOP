@@ -1,19 +1,15 @@
 #include "mainwin.h"
-#include <iostream> // for std::cerr logging
+#include <ctime>
+#include <iostream>
+#include <string>
 
-Mainwin::Mainwin() : filename{"untitled.smart"} {
-    
+Mainwin::Mainwin() : filename{"untitled.smart"}, curr_year{current_year()} {
+
     // /////////////////
     // G U I   S E T U P
     // /////////////////
 
-    // courses.reserve(MAX_SECTIONS);
-    // sections.reserve(MAX_COURSES);
-    // transcripts.reserve(MAX_TRANSCRIPTS);
-    // teachers.reserve(MAX_TEACHERS);
-    
-
-    set_default_size(600, 400);
+    set_default_size(800, 400);
     set_title("SMART");
 
     // Put a vertical box container as the Window contents
@@ -176,7 +172,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     O P E N F I L E
     // // Add an icon for openning one file
-    Gtk::Image* open_image = Gtk::manage(new Gtk::Image{"investment-1.1s-200px32.png"});
+    Gtk::Image* open_image = Gtk::manage(new Gtk::Image{"icon_images/investment-1.1s-200px32.png"});
     open = Gtk::manage(new Gtk::ToolButton(*open_image));
     open->set_tooltip_markup("Open File");
     open->signal_clicked().connect([this] {this->on_open_click();});
@@ -184,7 +180,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     S A V E A S
     // // Add an icon save as
-    Gtk::Image* save_as_image = Gtk::manage(new Gtk::Image{"piggy-bank32.png"});
+    Gtk::Image* save_as_image = Gtk::manage(new Gtk::Image{"icon_images/piggy-bank32.png"});
     save_as = Gtk::manage(new Gtk::ToolButton(*save_as_image));
     save_as->set_tooltip_markup("Save As");
     save_as->signal_clicked().connect([this] {this->on_save_as_click();});
@@ -192,7 +188,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     S A V E
     // // Add an icon for save
-    Gtk::Image* save_image = Gtk::manage(new Gtk::Image{"money-saving-dollar32.png"});
+    Gtk::Image* save_image = Gtk::manage(new Gtk::Image{"icon_images/money-saving-dollar32.png"});
     save = Gtk::manage(new Gtk::ToolButton(*save_image));
     save->set_tooltip_markup("Save");
     save->signal_clicked().connect([this] {this->on_save_click();});
@@ -204,7 +200,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     N E W  S T U D E N T
     // // Add icon to insert student
-    Gtk::Image* student_image = Gtk::manage(new Gtk::Image{"boy-girl32.png"});
+    Gtk::Image* student_image = Gtk::manage(new Gtk::Image{"icon_images/boy-girl32.png"});
     studenticon = Gtk::manage(new Gtk::ToolButton(*student_image));
     studenticon->set_tooltip_markup("New Student");
     studenticon->signal_clicked().connect([this] {this->on_new_student_click();});
@@ -212,7 +208,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     N E W  P A R E N T
     // // Add icon to insert student
-    Gtk::Image* parent_image = Gtk::manage(new Gtk::Image{"family32.png"});
+    Gtk::Image* parent_image = Gtk::manage(new Gtk::Image{"icon_images/family32.png"});
     parenticon = Gtk::manage(new Gtk::ToolButton(*parent_image));
     parenticon->set_tooltip_markup("New Parent");
     parenticon->signal_clicked().connect([this] {this->on_new_parent_click();});
@@ -220,7 +216,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     R E L A T E  S T U D E N T A N D  P A R E N T
     // // Add icon to insert student
-    Gtk::Image* relate_image = Gtk::manage(new Gtk::Image{"online-community32.png"});
+    Gtk::Image* relate_image = Gtk::manage(new Gtk::Image{"icon_images/online-community32.png"});
     relateicon = Gtk::manage(new Gtk::ToolButton(*relate_image));
     relateicon->set_tooltip_markup("Relate Student to Parent");
     relateicon->signal_clicked().connect([this] {this->on_student_parent_click();});
@@ -228,7 +224,7 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
        // //     N E W  T E A C H E R 
     // // Add icon to insert student
-    Gtk::Image* teacher_image = Gtk::manage(new Gtk::Image{"conference-education32.png"});
+    Gtk::Image* teacher_image = Gtk::manage(new Gtk::Image{"icon_images/conference-education32.png"});
     teachericon = Gtk::manage(new Gtk::ToolButton(*teacher_image));
     teachericon->set_tooltip_markup("New Teacher");
     teachericon->signal_clicked().connect([this] {this->on_new_teacher_click();});
@@ -240,27 +236,27 @@ Mainwin::Mainwin() : filename{"untitled.smart"} {
 
     // //     N E W  S E C T I O N
     // //     N E W  C O U R S E
-    Gtk::Image* course_image = Gtk::manage(new Gtk::Image{"online-course32.png"});
+    Gtk::Image* course_image = Gtk::manage(new Gtk::Image{"icon_images/online-course32.png"});
     courseicon = Gtk::manage(new Gtk::ToolButton(*course_image));
     courseicon->set_tooltip_markup("New Course");
     courseicon->signal_clicked().connect([this] {this->on_new_course_click();});
     toolbar->append(*courseicon);
 
-    Gtk::Image* section_image = Gtk::manage(new Gtk::Image{"presentation-learning32.png"});
+    Gtk::Image* section_image = Gtk::manage(new Gtk::Image{"icon_images/presentation-learning32.png"});
     sectionicon = Gtk::manage(new Gtk::ToolButton(*section_image));
     sectionicon->set_tooltip_markup("New Section");
     sectionicon->signal_clicked().connect([this] {this->on_new_section_click();});
     toolbar->append(*sectionicon);
 
     // //     N E W  T R A N S C R I P T
-    Gtk::Image* transcript_image = Gtk::manage(new Gtk::Image{"contract-agreement32r.png"});
+    Gtk::Image* transcript_image = Gtk::manage(new Gtk::Image{"icon_images/contract-agreement32r.png"});
     transcripticon = Gtk::manage(new Gtk::ToolButton(*transcript_image));
     transcripticon->set_tooltip_markup("New Transcript");
     transcripticon->signal_clicked().connect([this] {this->on_new_transcript_click();});
     toolbar->append(*transcripticon);
 
     // //     N E W  C O U R S E
-    Gtk::Image* grade_image = Gtk::manage(new Gtk::Image{"result-fail32r.png"});
+    Gtk::Image* grade_image = Gtk::manage(new Gtk::Image{"icon_images/result-fail32r.png"});
     gradeicon = Gtk::manage(new Gtk::ToolButton(*grade_image));
     gradeicon->set_tooltip_markup("Set Grade");
     gradeicon->signal_clicked().connect([this] {this->on_set_grade_click();});
@@ -401,6 +397,15 @@ void Mainwin::on_new_parent_click(){
     show_data();
 }
 
+// Get Current Year
+int Mainwin::current_year(){
+    
+    std::time_t t = std::time(nullptr);
+    std::tm *const time_info = std::localtime(&t);
+    return 1900 + time_info->tm_year;
+
+}
+
 void Mainwin::on_new_course_click(){
     
     try{
@@ -445,58 +450,77 @@ void Mainwin::on_new_course_click(){
         Gtk::MessageDialog{*this, e.what()}.run();
     }
     
-     on_view_course_click();
+    on_view_course_click();
     
 }
 
 void Mainwin::on_new_section_click(){
-    
-    try{
-        Gtk::Dialog dialogs{"Section", *this};
-        ComboBoxContainer<std::vector<Course*>> cbt_courses(courses);
-        ComboBoxContainer<std::vector<Teacher*>> cbt_teachers(teachers);
-        Gtk::VBox lbox, tbox;
-        Gtk::Label ll{"Select Course"};
-        lbox.add(ll);
-        Gtk::Label tl{"Select Teacher"};
-        tbox.add(tl);
-        dialogs.get_content_area()->add(lbox);
-        dialogs.get_vbox()->pack_start(cbt_courses);
-        dialogs.get_content_area()->add(tbox);
-        dialogs.get_vbox()->pack_start(cbt_teachers);
-        Gtk::HBox qbox;
-        Gtk::Label lq{"Year"};
-        qbox.add(lq);
-        Gtk::SpinButton sb;
-        sb.set_range(2020, 2050);
-        sb.set_increments(1.0, 1.0);
-        qbox.add(sb);
-        dialogs.get_content_area()->add(qbox);
-        dialogs.get_vbox()->show_all();
-        dialogs.add_button("Cancel", -1);     
-        dialogs.add_button("Fall", 0);     
-        dialogs.add_button("Spring", 1);    
-        dialogs.add_button("Summer", 2);
-        int year;
-        int result = dialogs.run();
-        if (result == 0 || result == 1 || result == 2){
-            year = static_cast<int>(sb.get_value());
-            Course& courseAt = *courses.at(cbt_courses.get_active_row_number());
-            Semester semester = semesters.at(result);
-            year = static_cast<int>(sb.get_value());
-            Teacher& teacherAt = *teachers.at(cbt_teachers.get_active_row_number());
-            sections.push_back(new Section{courseAt,teacherAt,semester, year});
-        
+     
+    if (teachers.empty() and !courses.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Teacher to Add Section"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else if (courses.empty() and !teachers.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Course to Add Section"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else if (courses.empty() and teachers.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Course and Teacher to Add Section"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else {
+        try {
+            Gtk::Dialog dialogs{"Teacher to Section", *this};
+            ComboBoxContainer<std::vector<Course *>> cbt_courses(courses);
+            ComboBoxContainer<std::vector<Teacher *>> cbt_teachers(teachers);
+            Gtk::VBox lbox, tbox;
+            Gtk::Label ll{"Select Course"};
+            lbox.add(ll);
+            Gtk::Label tl{"Select Teacher"};
+            tbox.add(tl);
+            dialogs.get_content_area()->add(lbox);
+            dialogs.get_vbox()->pack_start(cbt_courses);
+            dialogs.get_content_area()->add(tbox);
+            dialogs.get_vbox()->pack_start(cbt_teachers);
+            Gtk::HBox qbox;
+            Gtk::Label lq{"Year"};
+            qbox.add(lq);
+            Gtk::SpinButton sb;
+            sb.set_range(curr_year, 2050); 
+            sb.set_increments(1.0, 1.0);
+            qbox.add(sb);
+            dialogs.get_content_area()->add(qbox);
+            dialogs.get_vbox()->show_all();
+            dialogs.add_button("Cancel", -1);
+            dialogs.add_button("Fall", 0);
+            dialogs.add_button("Spring", 1);
+            dialogs.add_button("Summer", 2);
+            int year;
+            int result = dialogs.run();
+            if (result == 0 || result == 1 || result == 2) {
+                year = static_cast<int>(sb.get_value());
+                Course &courseAt =
+                    *courses.at(cbt_courses.get_active_row_number());
+                Semester semester = semesters.at(result);
+                year = static_cast<int>(sb.get_value());
+                Teacher &teacherAt =
+                    *teachers.at(cbt_teachers.get_active_row_number());
+                sections.push_back(
+                    new Section{courseAt, teacherAt, semester, year});
+
+            } else
+                return;
+        } catch (std::exception &e) {
+            Gtk::MessageDialog{*this, e.what()}.run();
         }
-        else return;      
+
+        on_view_section_click(); 
     }
-    catch(std::exception& e){
-        Gtk::MessageDialog{*this, e.what()}.run();
-    }
-    
-    on_view_section_click();
-    
 }
+
 void Mainwin::on_new_teacher_click(){
     try{  
         Gtk::Dialog dialogs{"Teacher", *this};
@@ -533,9 +557,22 @@ void Mainwin::on_new_teacher_click(){
     on_view_teacher_click();
 }
 void  Mainwin::on_new_transcript_click(){
-    try{  
+    if (students.empty() and !sections.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Student to Add Section"};
+        dialog.set_modal(true);
+        dialog.run();
+    } else if (sections.empty() and !students.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Section to Relate"};
+        dialog.set_modal(true);
+        dialog.run();
+    } else if (students.empty() and sections.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Section and Student"};
+        dialog.set_modal(true);
+        dialog.run();
+    } else {
+        try {  
         
-        Gtk::Dialog dialogs{"Section", *this};
+        Gtk::Dialog dialogs{"Student to Section", *this};
         ComboBoxContainer<std::vector<Section*>> cbt_sections(sections);
         ComboBoxContainer<std::vector<Student*>> cbt_students(students);
         Gtk::VBox lbox, tbox;
@@ -559,78 +596,103 @@ void  Mainwin::on_new_transcript_click(){
             
         }else return;
     
-    }catch(std::exception& e){
+        }catch(std::exception& e){
+            
+            Gtk::MessageDialog{*this, e.what()}.run();
         
-        Gtk::MessageDialog{*this, e.what()}.run();
-    
+        }
+        on_view_transcript_click();
     }
-    on_view_transcript_click(); 
-} 
+}
 
 void  Mainwin::on_set_grade_click(){
-    try{
-        Gtk::Dialog dialog{"Set Grade", *this};
-        Gtk::VBox sbox;
-        Gtk::Label sl{"Select Transcript"};
-        sbox.add(sl);
-        ComboBoxContainer<std::vector<Transcript*>> cbt_transcripts(transcripts);
-        dialog.get_content_area()->add(sbox);
-        dialog.get_vbox()->pack_start(cbt_transcripts);    
-        dialog.add_button("Cancel", -1);
-        std::ostringstream oss;
-        for(int i = 0; i < grades_vector.size() ; i++) {
-            oss.str(""); 
-            oss << grades_vector.at(i);
-            dialog.add_button(oss.str(), i);
-        }
-        dialog.get_vbox()->show_all();
-        int result = dialog.run();
-        if(result >= 0 && result <= 6){
-            Grade gradeAt = grades_vector.at(result);
-            transcripts.at(cbt_transcripts.get_active_row_number())->assign_grade(gradeAt);
-        }
-        else return;
-
-     }catch(std::exception& e){
-        
-        Gtk::MessageDialog{*this, e.what()}.run();
     
-    } 
-    on_view_transcript_click();
+    if(transcripts.empty()){
+        Gtk::MessageDialog dialog{*this, "Add Transcript of Student"};
+        dialog.set_modal(true);
+        dialog.run();
+    }
+    else{
+        try{
+            Gtk::Dialog dialog{"Set Grade", *this};
+            Gtk::VBox sbox;
+            Gtk::Label sl{"Select Transcript"};
+            sbox.add(sl);
+            ComboBoxContainer<std::vector<Transcript*>> cbt_transcripts(transcripts);
+            dialog.get_content_area()->add(sbox);
+            dialog.get_vbox()->pack_start(cbt_transcripts);    
+            dialog.add_button("Cancel", -1);
+            std::ostringstream oss;
+            for(int i = 0; i < grades_vector.size() ; i++) {
+                oss.str(""); 
+                oss << grades_vector.at(i);
+                dialog.add_button(oss.str(), i);
+            }
+            dialog.get_vbox()->show_all();
+            int result = dialog.run();
+            if(result >= 0 && result <= 6){
+                Grade gradeAt = grades_vector.at(result);
+                transcripts.at(cbt_transcripts.get_active_row_number())->assign_grade(gradeAt);
+            }
+            else return;
+
+        }catch(std::exception& e){
+            
+            Gtk::MessageDialog{*this, e.what()}.run();
+        
+        } 
+        on_view_transcript_click();
+    }
 }
 
 void Mainwin::on_student_parent_click(){
-    
-    try{
-        Gtk::Dialog dialog{"Relate Student and Parent", *this};
-        Gtk::VBox sbox,pbox;
-        Gtk::Label sl{"Select Student"};
-        Gtk::Label pl{"Select Parent"};
-        sbox.add(sl);
-        pbox.add(pl);
-        ComboBoxContainer<std::vector<Student*>> cbt_students(students);
-        ComboBoxContainer<std::vector<Parent*>> cbt_parents(parents);
-        dialog.get_content_area()->add(sbox);
-        dialog.get_vbox()->pack_start(cbt_students);
-        dialog.get_content_area()->add(pbox);
-        dialog.get_vbox()->pack_start(cbt_parents);
-        dialog.add_button("Relate", 1);    
-        dialog.add_button("Cancel", 0);
-        dialog.get_vbox()->show_all();
-        int result = dialog.run();
-        if(result == 1){
-            students.at(cbt_students.get_active_row_number())->add_parent(*parents.at(cbt_parents.get_active_row_number()));
-            parents.at(cbt_parents.get_active_row_number())->add_student(*students.at(cbt_students.get_active_row_number()));
+
+    if (students.empty() and !parents.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Student to Relate"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else if (parents.empty() and !students.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Parent to Relate"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else if (parents.empty() and students.empty()) {
+        Gtk::MessageDialog dialog{*this, "Add Parent and Student to Relate"};
+        dialog.set_modal(true);
+        dialog.run();
+    } 
+    else {
+        try{
+            Gtk::Dialog dialog{"Relate Student and Parent", *this};
+            Gtk::VBox sbox,pbox;
+            Gtk::Label sl{"Select Student"};
+            Gtk::Label pl{"Select Parent"};
+            sbox.add(sl);
+            pbox.add(pl);
+            ComboBoxContainer<std::vector<Student*>> cbt_students(students);
+            ComboBoxContainer<std::vector<Parent*>> cbt_parents(parents);
+            dialog.get_content_area()->add(sbox);
+            dialog.get_vbox()->pack_start(cbt_students);
+            dialog.get_content_area()->add(pbox);
+            dialog.get_vbox()->pack_start(cbt_parents);
+            dialog.add_button("Relate", 1);    
+            dialog.add_button("Cancel", 0);
+            dialog.get_vbox()->show_all();
+            int result = dialog.run();
+            if(result == 1){
+                students.at(cbt_students.get_active_row_number())->add_parent(*parents.at(cbt_parents.get_active_row_number()));
+                parents.at(cbt_parents.get_active_row_number())->add_student(*students.at(cbt_students.get_active_row_number()));
+            }
+            else return;
+
         }
-        else return;
-
+        catch(std::exception& e){
+            Gtk::MessageDialog{*this, e.what()}.run();
+        }
+        
+        show_data();
     }
-    catch(std::exception& e){
-        Gtk::MessageDialog{*this, e.what()}.run();
-    }
-    
-    show_data();
-
 }             
 void Mainwin::on_view_student_click(){
     Glib::ustring v = "";
@@ -701,10 +763,10 @@ void Mainwin::on_about_click(){
     Gtk::AboutDialog dialog;
     dialog.set_transient_for(*this); 
     dialog.set_program_name("SMART");
-    auto logo = Gdk::Pixbuf::create_from_file("pexels-louis-3143809smaller.jpg");
+    auto logo = Gdk::Pixbuf::create_from_file("icon_images/pexels-louis-3143809smaller.jpg");
     dialog.set_logo(logo);
     dialog.set_version("Version 1.3.0");
-    dialog.set_copyright("Copyright 2021");
+    dialog.set_copyright("Copyright " + std::to_string(curr_year));
     dialog.set_license_type(Gtk::License::LICENSE_MIT_X11);
     std::vector< Glib::ustring > authors = {"Gerald Kimeu"};
     dialog.set_authors(authors);

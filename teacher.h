@@ -9,14 +9,10 @@
 class Teacher : public Person{
 	public:
 		using Person::Person;
-		virtual void save(std::ostream& ost);
-		std::string full_info() const override;	
+        Teacher(std::istream &ist); 
+		void save(std::ostream &ost) override;
+        std::string full_info() const override;	
 
 };
-
-
-
-
-
 
 #endif

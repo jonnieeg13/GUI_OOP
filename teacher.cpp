@@ -1,4 +1,7 @@
 #include "teacher.h"
+#include "section.h"
+
+Teacher::Teacher(std::istream &ist) : Person{ist} {}
 
 void Teacher::save(std::ostream& ost){
 	Person::save(ost);
