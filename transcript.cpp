@@ -1,8 +1,7 @@
 #include "transcript.h"
 
-
-Transcript::Transcript(Student& student, Section& section) : _student{student}, _section{section}, _grade{Grade::X}{ 
-}
+Transcript::Transcript(Student& student, Section& section) : 
+	_student{student}, _section{section}, _grade{Grade::X} {}
 
 Transcript::Transcript(std::istream& ist) :_section{*(new Section{ist})}, _student{*(new Student{ist})} {
 	_grade = load_grade(ist);
@@ -10,8 +9,9 @@ Transcript::Transcript(std::istream& ist) :_section{*(new Section{ist})}, _stude
 }
 
 void Transcript::save(std::ostream& ost){
-	_section.save(ost);
+    
 	_student.save(ost);
+    _section.save(ost);
 	ost << _grade << "\n";
 	
 }

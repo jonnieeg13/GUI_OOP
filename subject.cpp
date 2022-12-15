@@ -1,27 +1,53 @@
 #include "subject.h"
 
 std::string to_string(Subject s) {
- 	if(s == Subject::READING) {return "reading";}
-	if(s == Subject::WRITING) {return "writing";}
-	if(s == Subject::MATH) {return "math";}
-	if(s == Subject::SCIENCE) {return "science";}
-	if(s == Subject::HISTORY) {return "history";}
-	throw std::runtime_error{"Invalid Subject"};
+
+	std::string subject = "";
+
+	switch (s)
+	{
+        case Subject::READING:
+            subject = "Reading";
+            break;
+
+        case Subject::WRITING: 
+            subject = "Writing";
+			break;
+            
+		case Subject::MATH:
+			return "Math";
+			break;
+
+		case Subject::SCIENCE:
+			return "Science";
+			break;
+
+		case Subject::HISTORY:
+			return "History";
+			break;
+			
+		default:
+			throw std::runtime_error{"Invalid Subject"};
+			break;
+	}
+
+	return subject;
 }
 
-std::ostream& operator<<(std::ostream& ost, const Subject& subject){
+std::ostream& operator<<(std::ostream& ost, const Subject& subject){	
 	ost << to_string(subject);
 	return ost;
 }
 
 Subject load_subject(std::istream& ist){
+	
 	std::string s;
 	std::getline(ist, s);
-	if(s == "reading") {return Subject::READING;}
-	if(s == "writing") {return Subject::WRITING;}
-	if(s == "math")    {return Subject::MATH;}
-	if(s == "science") {return Subject::SCIENCE;}
-	if(s == "history") {return Subject::HISTORY;}
-	throw std::runtime_error{"Invalid Subject"};
-}
+	if(s == "Reading") {return Subject::READING;}
+	else if(s == "Writing") {return Subject::WRITING;}
+	else if(s == "Math")    {return Subject::MATH;}
+	else if(s == "Science") {return Subject::SCIENCE;}
+	else if(s == "History") {return Subject::HISTORY;}
+	else throw std::runtime_error{"Invalid Subject: " + s};
 
+}

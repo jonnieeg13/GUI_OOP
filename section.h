@@ -17,7 +17,7 @@ class Section{
 		
 	private:
 		Course _course;
-		Teacher& _teacher;
+		Teacher* _teacher;
 		Semester _semester;
 		int year;
 };

@@ -56,3 +56,6 @@ debug: mainwin smart
 
 clean:       
 	rm -f *.o *.gch *~ *a.out mainwin smart
+
+clean_smart_files:
+	rm -f *.smart

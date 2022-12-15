@@ -3,7 +3,10 @@
 #include <iostream>
 #include <string>
 
-Mainwin::Mainwin() : filename{"untitled.smart"}, curr_year{current_year()} {
+Mainwin::Mainwin() : filename{"untitled.smart"} {
+
+    // Set the Current Year
+    current_year();
 
     // /////////////////
     // G U I   S E T U P
@@ -296,6 +299,14 @@ Mainwin::~Mainwin() {
 
 }
 
+// Get Current Year
+void Mainwin::current_year() {
+
+    std::time_t t = std::time(nullptr);
+    std::tm *const time_info = std::localtime(&t);
+    curr_year = 1900 + time_info->tm_year;
+}
+
 // /////////////////
 // C A L L B A C K S
 // /////////////////
@@ -395,15 +406,6 @@ void Mainwin::on_new_parent_click(){
     
     } 
     show_data();
-}
-
-// Get Current Year
-int Mainwin::current_year(){
-    
-    std::time_t t = std::time(nullptr);
-    std::tm *const time_info = std::localtime(&t);
-    return 1900 + time_info->tm_year;
-
 }
 
 void Mainwin::on_new_course_click(){
@@ -522,6 +524,7 @@ void Mainwin::on_new_section_click(){
 }
 
 void Mainwin::on_new_teacher_click(){
+    
     try{  
         Gtk::Dialog dialogs{"Teacher", *this};
         Gtk::HBox qbox;
@@ -561,45 +564,54 @@ void  Mainwin::on_new_transcript_click(){
         Gtk::MessageDialog dialog{*this, "Add Student to Add Section"};
         dialog.set_modal(true);
         dialog.run();
-    } else if (sections.empty() and !students.empty()) {
+    } 
+    else if (sections.empty() and !students.empty()) {
         Gtk::MessageDialog dialog{*this, "Add Section to Relate"};
         dialog.set_modal(true);
         dialog.run();
-    } else if (students.empty() and sections.empty()) {
+    } 
+    else if (students.empty() and sections.empty()) {
         Gtk::MessageDialog dialog{*this, "Add Section and Student"};
         dialog.set_modal(true);
         dialog.run();
-    } else {
+    } 
+    else {
+        
         try {  
         
-        Gtk::Dialog dialogs{"Student to Section", *this};
-        ComboBoxContainer<std::vector<Section*>> cbt_sections(sections);
-        ComboBoxContainer<std::vector<Student*>> cbt_students(students);
-        Gtk::VBox lbox, tbox;
-        Gtk::Label ll{"Select Section"};
-        lbox.add(ll);
-        Gtk::Label tl{"Select Student"};
-        tbox.add(tl);
-        dialogs.get_content_area()->add(lbox);
-        dialogs.get_vbox()->pack_start(cbt_sections);
-        dialogs.get_content_area()->add(tbox);
-        dialogs.get_vbox()->pack_start(cbt_students);
-        dialogs.get_vbox()->show_all();
-        dialogs.add_button("Enter", 1);
-        dialogs.add_button("Cancel", 0);
-        int result = dialogs.run();
-        if (result ==1){
-    
-            Section& sectionAt = *sections.at(cbt_sections.get_active_row_number());
-            Student& studentAt = *students.at(cbt_students.get_active_row_number());
-            transcripts.push_back(new Transcript{studentAt,sectionAt}); 
-            
-        }else return;
-    
-        }catch(std::exception& e){
-            
-            Gtk::MessageDialog{*this, e.what()}.run();
+            Gtk::Dialog dialogs{"Student to Section", *this};
+            ComboBoxContainer<std::vector<Section*>> cbt_sections(sections);
+            ComboBoxContainer<std::vector<Student*>> cbt_students(students);
+            Gtk::VBox lbox, tbox;
+            Gtk::Label ll{"Select Section"};
+            lbox.add(ll);
+            Gtk::Label tl{"Select Student"};
+            tbox.add(tl);
+            dialogs.get_content_area()->add(lbox);
+            dialogs.get_vbox()->pack_start(cbt_sections);
+            dialogs.get_content_area()->add(tbox);
+            dialogs.get_vbox()->pack_start(cbt_students);
+            dialogs.get_vbox()->show_all();
+            dialogs.add_button("Enter", 1);
+            dialogs.add_button("Cancel", 0);
+            int result = dialogs.run();
+            if (result ==1){
         
+                Section& sectionAt = *sections.at(cbt_sections.get_active_row_number());
+                Student& studentAt = *students.at(cbt_students.get_active_row_number());
+                transcripts.push_back(new Transcript{studentAt,sectionAt}); 
+                
+            }else return;
+
+        } 
+        catch (std::out_of_range &ex) {
+
+            Gtk::MessageDialog{*this, "Nothing Selected"}.run();
+
+        } 
+        catch (std::exception &e) {
+
+            Gtk::MessageDialog{*this, e.what()}.run();
         }
         on_view_transcript_click();
     }
@@ -636,11 +648,16 @@ void  Mainwin::on_set_grade_click(){
             }
             else return;
 
-        }catch(std::exception& e){
-            
-            Gtk::MessageDialog{*this, e.what()}.run();
-        
         } 
+        catch (std::out_of_range &ex) {
+
+            Gtk::MessageDialog{*this, "Nothing Selected"}.run();
+
+        } 
+        catch (std::exception &e) {
+
+            Gtk::MessageDialog{*this, e.what()}.run();
+        }
         on_view_transcript_click();
     }
 }
@@ -790,6 +807,10 @@ void Mainwin::on_about_click(){
 
 }
 
+// /////////////////////////////
+// F I L E  M A N A G E M E N T
+// /////////////////////////////
+
 void Mainwin::on_open_click() {
     Gtk::FileChooserDialog dialog("Please choose a file",
           Gtk::FileChooserAction::FILE_CHOOSER_ACTION_OPEN);
@@ -819,82 +840,102 @@ void Mainwin::on_open_click() {
             std::ifstream ifs{filename};
             on_new_school_click();
             show_data();
-            int student_size, parent_size, section_size, course_size, teacher_size, transcript_size;
+            int student_size = 0; 
+            int parent_size = 0; 
+            int section_size = 0;
+            int course_size = 0; 
+            int teacher_size = 0;
+            int transcript_size = 0;
             ifs >> student_size;
+            ifs.ignore(32767, '\n');
             while(student_size--) students.push_back(new Student{ifs});           
             ifs >> parent_size;
+            ifs.ignore(32767, '\n');
             while(parent_size--) parents.push_back(new Parent{ifs});
             ifs >> course_size;
+            ifs.ignore(32767, '\n');
             while(course_size--) courses.push_back(new Course{ifs});
-            ifs >> section_size; 
+            ifs >> section_size;
+            ifs.ignore(32767, '\n');
             while(section_size--) sections.push_back(new Section{ifs});
-            ifs >> teacher_size; 
+            ifs >> teacher_size;
+            ifs.ignore(32767, '\n');
             while(teacher_size--) teachers.push_back(new Teacher{ifs});
             ifs >> transcript_size;
+            ifs.ignore(32767, '\n');
             while(transcript_size--) transcripts.push_back(new Transcript{ifs});     
             if(!ifs) throw  std::runtime_error{"File contents bad"};
-            show_data(); 
+            show_data();
         } catch (std::exception& e) {
-            Gtk::MessageDialog{*this, "Unable to open File"}.run();
+            std::string error_msg = "Unable to open File Error: " + std::string(e.what());                         
+            Gtk::MessageDialog{*this, error_msg}.run();
         }
+
     }
     show_data();
 }
 
 void Mainwin::on_save_click(){
 
-    try {           
+    try {
         std::ofstream ofs{filename};
-        ofs << students.size() << std::endl;
+        ofs << students.size() << '\n';
         for(auto  s : students) s->save(ofs);
-        ofs << parents.size() << std::endl;
+        ofs << parents.size() << '\n';
         for(auto  p : parents) p->save(ofs);
-        ofs << courses.size() << std::endl;
+        ofs << courses.size() << '\n';
         for(auto  cou : courses) cou->save(ofs);
-        ofs << sections.size() << std::endl;
+        ofs << sections.size() << '\n';
         for(auto  sec : sections) sec->save(ofs);
-        ofs << teachers.size() << std::endl;
+        ofs << teachers.size() << '\n';
         for(auto  tea : teachers) tea->save(ofs);
-        ofs << transcripts.size() << std::endl;
+        ofs << transcripts.size() << '\n';
         for(auto  tra : transcripts) tra->save(ofs);
         if(!ofs) throw std::runtime_error{"File contents bad"};
         show_data();
-    }catch (std::exception& e) {
-        Gtk::MessageDialog{*this, "Unable to Save File"}.run();
+    }
+    catch (std::exception& e) {
+        std::string error_msg = "Unable to open File Error: " + std::string(e.what());
+        Gtk::MessageDialog{*this, error_msg}.run();
     }    
 
 }
 
 void Mainwin::on_save_as_click(){
     
-    Gtk::FileChooserDialog dialog("Please choose a file",
-    Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
-    dialog.set_transient_for(*this);
+    try{
+        Gtk::FileChooserDialog dialog("Please choose a file",
+        Gtk::FileChooserAction::FILE_CHOOSER_ACTION_SAVE);
+        dialog.set_transient_for(*this);
 
-    auto filter_smart = Gtk::FileFilter::create();
-    filter_smart->set_name("SMART files");
-    filter_smart->add_pattern("*.smart");
-    dialog.add_filter(filter_smart);
- 
-    auto filter_any = Gtk::FileFilter::create();
-    filter_any->set_name("Any files");
-    filter_any->add_pattern("*");
-    dialog.add_filter(filter_any);
-
-    dialog.set_filename(filename);
-
-    dialog.add_button("_Save", 1);
-    dialog.add_button("_Cancel", 0);
+        auto filter_smart = Gtk::FileFilter::create();
+        filter_smart->set_name("SMART files");
+        filter_smart->add_pattern("*.smart");
+        dialog.add_filter(filter_smart);
     
-    int result = dialog.run();
+        auto filter_any = Gtk::FileFilter::create();
+        filter_any->set_name("Any files");
+        filter_any->add_pattern("*");
+        dialog.add_filter(filter_any);
 
-    filename = dialog.get_filename();
+        dialog.set_filename(filename);
 
-    if (result == 1) {
-        on_save_click();
+        dialog.add_button("_Save", 1);
+        dialog.add_button("_Cancel", 0);
         
-    }
-    show_data();
+        int result = dialog.run();
 
+        filename = dialog.get_filename();
+
+        if (result == 1) {
+            on_save_click();
+            
+        }
+        show_data();
+    } 
+    catch (std::exception &e) {
+        std::string error_msg = "Unable to open File Error: " + std::string(e.what());
+        Gtk::MessageDialog{*this, error_msg}.run();
+    }
 }
 

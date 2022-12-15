@@ -48,9 +48,9 @@ class Mainwin : public Gtk::Window {
         void on_open_click();
         void on_save_as_click();
         void on_save_click();
-        int current_year();
+        void current_year();
 
-        private: 
+    private: 
         void show_data();
         std::vector<Student*> students;                   
         std::vector<Parent*> parents;

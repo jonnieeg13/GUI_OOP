@@ -11,9 +11,11 @@ void Course::save(std::ostream& ost) {
 	ost << _subject << "\n";
 	ost << _grade << "\n";
 }
+
 std::string Course::to_string() const {
-	return ::to_string(_subject) + " (" + " grade " + std::to_string(_grade) + ") ";
+	return ::to_string(_subject) + " (" + "Grade " + std::to_string(_grade) + ") ";
 }
+
 std::ostream& operator<<(std::ostream& ost, const Course& course){
 
 	ost << course.to_string();
